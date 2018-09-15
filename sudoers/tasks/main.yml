@@ -1,0 +1,4 @@
+---
+# tasks file for sudoers
+- name: sudoers rule for docker user and groups.
+  template: src=16-dockeradmin.j2 dest=/etc/sudoers.d/16-dockeradmin  owner=root group=root mode=0600 validate='/usr/sbin/visudo -cf %s' backup=yes

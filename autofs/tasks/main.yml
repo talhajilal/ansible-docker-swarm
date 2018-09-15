@@ -1,0 +1,24 @@
+---
+- name: autofs-module
+  yum: pkg=autofs state=latest
+
+
+- name: autofs services
+  service: name=autofs state=started enabled=yes 
+
+
+
+- name:  auto.nf template file , 
+  template: src=auto.nfs.j2 dest=/etc/auto.nfs  backup=yes owner=root group=root
+  register: configure1
+
+
+- name:  autofs.master.d/nfs.auto
+  template: src=nfs.autofs.j2  dest=/etc/auto.master.d/nfs.autofs backup=yes owner=root group=root
+  register: configure2
+
+
+
+- name: autofs services
+  service: name=autofs state=restarted enabled=yes
+  when: configure1|changed and configure2|changed or configure1|changed or  configure2|changed 

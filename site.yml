@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  become: yes
+  gather_facts: yes
+  roles:
+    - docker-mgt-users
+    - packages
+    - autofs
+    - sudoers

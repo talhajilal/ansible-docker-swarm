@@ -1,0 +1,35 @@
+---
+# tasks file for docker-mgt-user
+
+- name: Ensure dockerroot exsist.
+  group:
+    name: dockerroot
+    gid: 230
+    state: present
+
+
+- name: Ensure docker exsist.
+  group:
+    name: docker
+    gid: 50816
+    state: present
+
+
+
+- name: Confirm user dockerroot added
+  user:
+    name: dockerroot
+    comment: Docker root user without shell.
+    uid: 230
+    group: dockerroot
+    shell: /sbin/nologin
+    home: /var/lib/docker
+
+- name: Confirm user dockermgmt added
+  user:
+    name: dockermgmt
+    comment: Docker root user without shell.
+    uid: 50124
+    group: dockerroot
+    shell: /bin/bash 
+    home: /home/dockermgmt

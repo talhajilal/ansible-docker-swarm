@@ -1,0 +1,6 @@
+%dockeradmin        ALL=(ALL)       NOPASSWD: /usr/bin/docker
+%dockeradmin        ALL=(ALL)       NOPASSWD: /usr/bin/systemctl stop docker
+%dockeradmin        ALL=(ALL)       NOPASSWD: /usr/bin/systemctl start docker
+%dockeradmin        ALL=(ALL)       NOPASSWD: /usr/bin/systemctl restart docker
+%dockeradmin        ALL=(ALL)       NOPASSWD: /usr/bin/systemctl status docker
+%dockeradmin        ALL=(dockermgmt)       NOPASSWD: ALL
