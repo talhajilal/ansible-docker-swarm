@@ -1,0 +1,18 @@
+---
+- hosts: docker-swarm-cluster
+  become: yes
+  gather_facts: yes
+  ignore_errors: yes
+  roles:
+       - docker-mgt-users
+       - packages
+       - autofs
+       - sudoers
+
+- hosts: docker-swarm-cluster
+  become: yes
+  gather_facts: yes
+  ignore_errors: yes
+  roles:
+       - docker-swarm
+

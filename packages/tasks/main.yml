@@ -3,6 +3,5 @@
 - name: Required packages for docker and docker swarm cluster.
   yum: name={{ item }} state=present
   with_items:
-  - docker
-  - autofs
-#  - nfs-common
+         - docker-ce
+         - autofs

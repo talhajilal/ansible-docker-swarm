@@ -1,0 +1,50 @@
+---
+# tasks file for docker-swarm
+#- debug: var=inventory_hostname
+
+
+#- debug: msg={{inventory_hostname in groups['master']}}
+#  register: ip
+
+- name: "get docker info"
+  shell: docker info
+  register: docker_info
+  changed_when: false
+
+
+
+- name: Docker validate if node is already manager or not. 
+  shell: docker swarm join-token -q worker
+  when: inventory_hostname in groups['master']  
+  register: worker_token
+
+
+# Using eth0 of master node.
+- name: create primary swarm manager", when docker manager validation step failed.
+  shell: docker swarm init --advertise-addr {{ ansible_eth0['ipv4']['address'] }}
+  when: inventory_hostname in groups['master']  and manager_token is failed
+  register: new_token
+
+
+- name: re-run docker swarm command to get master's token.
+  shell: docker swarm join-token -q worker
+  when: inventory_hostname in groups['master']  and new_token is succeeded
+  register: worker_token
+
+- debug: var=manager_token.stdout
+  when: inventory_hostname in groups['master']
+
+- name: copy some testing
+  shell: echo " {{ worker_token.stdout }}  {{ hostvars['master']['ansible_eth0']['ipv4']['address'] }} " >> /tmp/test
+  when: inventory_hostname in groups['master']
+
+
+- debug: var=docker_info
+
+- name: join as a worker
+  shell: docker swarm join --token "{{ worker_token.stdout }}"  {{ hostvars['master']['ansible_eth0']['ipv4']['address'] }}:2377
+  when: "docker_info.stdout.find('Swarm: inactive') != -1"
+  retries: 3
+  delay: 20
+
+
