@@ -3,7 +3,13 @@
 - name: validated if docker registry image already available. 
   shell: "docker images registry | grep -v grep |grep registry | grep '2' | awk '{print $1}'"
   register: check_result
-- debug: msg="{{ check_result.stdout }}"
+
+
+
+- debug: msg={{ check_result.stdout }}
+
+
+
 - name: master image exists
   command: echo "Image exits..." 
   when: check_result.stdout == "registry"
@@ -11,16 +17,21 @@
 - name: master image does exit
   command: echo "Image does not exit..." 
   when: check_result.stdout == ""
+
+
 - name: copy image, 
   copy: src=files/registry-2.tar.gz dest=/tmp/registry-2.tar.gz 
   when: check_result.stdout == ""
+
+
+
 - name: import docke registry image
   shell: docker load < /tmp/registry-2.tar.gz
   when: check_result.stdout == ""
   register: registery_load_result
 
 - name: verify registry is not runing 
-  shell: "docker images | grep regist | grep -v grep | grep registry  | awk '{print $2 }'"
+  shell: "docker ps | grep regist | grep -v grep | grep registry  | awk '{print $2 }'"
   register: check_container_running
 
 

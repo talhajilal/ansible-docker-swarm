@@ -1,9 +1,6 @@
 ---
-- hosts: all
+- hosts: manager1
   become: yes
   gather_facts: yes
   roles:
-    - docker-mgt-users
-    - packages
-    - autofs
-    - sudoers
+    - bitbucket

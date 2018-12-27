@@ -1,0 +1,25 @@
+---
+# tasks file for bitbucket
+
+# checking for bitbucket service and running replicas.
+- name: bitbucket service status validation.
+#  shell: "docker service ls  | grep bitbucket | grep -v grep | grep bitbucket | awk '{print $2}'"
+  shell: "docker service ls | grep bitbucket | awk '{print $4}' | awk -F '/' '{print $1}'"
+  register: service_status
+
+# Removing hang or bad service
+- name: bitbucket service running with issue clearning the current service.
+  shell: docker service rm bitbucket
+  when: service_status.stdout == "0" 
+
+
+# adding async option in task if task does not complete in 120 sec,  
+- name: create bitbucket service when it is not running.
+  shell: "docker service create --replicas 2 --name bitbucket  --mount type=bind,source=/mnt/docker/atlassian/application-data/bitbucket/shared,target=/var/atlassian/application-data/bitbucket/shared --publish 81:7999 --publish 83:7990 atlassian/bitbucket-server:4.14"
+  async: 120
+  when: service_status.stdout == "" or service_status.stdout == "0"
+  register: bitbucket_service_status
+
+#- debug: msg={{ bitbucket_service_status }}
+#  when: bitbucket_service_status is succeeded and bitbucket_service_status is changed 
+  

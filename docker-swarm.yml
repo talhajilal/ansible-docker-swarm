@@ -22,4 +22,8 @@
   ignore_errors: yes
   roles:
        - registry
-
+- hosts: manager1
+  become: yes
+  gather_facts: yes
+  roles:
+    - bitbucket
