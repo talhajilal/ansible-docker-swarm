@@ -16,3 +16,10 @@
   roles:
        - docker-swarm
 
+- hosts: manager1
+  become: yes
+  gather_facts: yes
+  ignore_errors: yes
+  roles:
+       - registry
+

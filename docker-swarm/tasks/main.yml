@@ -1,4 +1,7 @@
 ---
+
+- name: docker service state started verification.
+  service: name=docker state=started enabled=yes
 # tasks file for docker-swarm
 - name: "get docker info"
   shell: docker info

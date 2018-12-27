@@ -21,4 +21,4 @@
 
 - name: autofs services
   service: name=autofs state=restarted enabled=yes
-  when: configure1|changed and configure2|changed or configure1|changed or  configure2|changed 
+  when: configure1 is changed and configure2 is changed or configure1 is changed or  configure2 is changed 
