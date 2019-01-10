@@ -1,0 +1,26 @@
+---
+# tasks file for jenkins-master
+
+# checking for jenkins-master service and running replicas.
+- name: jenkins-master service status validation.
+#  shell: "docker service ls  | grep jenkins-master | grep -v grep | grep jenkins-master | awk '{print $2}'"
+  shell: "docker service ls | grep jenkins-master | awk '{print $4}' | awk -F '/' '{print $1}'"
+  register: service_status
+
+# Removing hang or bad service
+- name: jenkins-master service running with issue clearning the current service.
+  shell: docker service rm jenkins-master
+  when: service_status.stdout == "0" 
+
+
+# adding async option in task if task does not complete in 120 sec,  
+- name: create jenkins-master service when it is not running.
+  shell: docker service create --name jenkins-master  --mount type=bind,source=/mnt/jenkins-master,destination=/var/jenkins_home --publish=9090:8080 cloudbees/jenkins-enterprise:latest
+# docker service create --name jenkins-master --mount type=bind,source=/mnt/jenkins-master,destination=/var/jenkins_home --publish=9091:8080 cloudbees/jenkins-operations-center:latest 
+  async: 120
+  when: service_status.stdout == "" or service_status.stdout == "0"
+  register: jenkins-master_service_status
+
+#- debug: msg={{ jenkins-master_service_status }}
+#  when: jenkins-master_service_status is succeeded and jenkins-master_service_status is changed 
+  

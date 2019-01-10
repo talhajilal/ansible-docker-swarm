@@ -1,0 +1,25 @@
+---
+# tasks file for jenkins-oc
+
+# checking for jenkins-oc service and running replicas.
+- name: jenkins-oc service status validation.
+#  shell: "docker service ls  | grep jenkins-oc | grep -v grep | grep jenkins-oc | awk '{print $2}'"
+  shell: "docker service ls | grep jenkins-oc | awk '{print $4}' | awk -F '/' '{print $1}'"
+  register: service_status
+
+# Removing hang or bad service
+- name: jenkins-oc service running with issue clearning the current service.
+  shell: docker service rm jenkins-oc
+  when: service_status.stdout == "0" 
+
+
+# adding async option in task if task does not complete in 120 sec,  
+- name: create jenkins-oc service when it is not running.
+  shell: docker service create --name jenkins-oc --mount type=bind,source=/mnt/jenkins-oc,destination=/var/jenkins_home --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock --publish=9091:8080 --publish 50000:50000 cloudbees/jenkins-operations-center:latest 
+  async: 120
+  when: service_status.stdout == "" or service_status.stdout == "0"
+  register: jenkins-oc_service_status
+
+#- debug: msg={{ jenkins-oc_service_status }}
+#  when: jenkins-oc_service_status is succeeded and jenkins-oc_service_status is changed 
+  
