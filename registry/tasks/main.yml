@@ -42,3 +42,8 @@
 
 #- name: import docker image to local host.
 #  command: 'docker load < files/registry-2.tar.gz'
+#
+#
+#
+- name: create file testing 
+  file: path=/opt/a/b/c/d/e/f state=directory owner=root mode=777 

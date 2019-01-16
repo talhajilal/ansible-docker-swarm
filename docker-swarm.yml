@@ -16,15 +16,17 @@
   roles:
        - docker-swarm
 
-- hosts: manager1
+- hosts: master
   become: yes
   gather_facts: yes
   ignore_errors: yes
   roles:
        - registry
-- hosts: manager1
+
+
+- hosts: master
   become: yes
   gather_facts: yes
-  ignore_erros: yes
+  ignore_errors: yes
   roles:
-    - bitbucket
+       - bitbucket
